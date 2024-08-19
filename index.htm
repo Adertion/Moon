@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <link rel="shortcut icon" href="#" />
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
+    <!--<script src="https://unpkg.com/shapefile@0.6"></script>-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css" />
+    <link href="Libs/jquery-ui-1.11.4/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+    <!--当前网页的样式文件-->
+    <link href="Styles/style.css" rel="stylesheet" type="text/css" />
+    <!-- 第三方jquery插件库 -->
+    <script src="Libs/jquery-1.11.2.min.js" type="text/javascript"></script>
+    <script src="Libs/jquery-ui-1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="Libs/jquery.ui.datepicker-zh-CN.js" type="text/javascript"></script>
+    <!--OL5脚本库及样式文件-->
+    <script src="Libs/ol5/ol.js" type="text/javascript"></script>
+    <link href="Libs/ol5/ol.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!--引入echarts-->
+    <script src="Libs/echarts/echarts.common.min.js" type="text/javascript"></script>
+    <script src="Libs/echarts/macarons.js" type="text/javascript"></script>
+    <!--引入bootstrap框架-->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" />
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+    <!--引入bootstrap-table插件-->
+    <link href="Libs/bootstrap/bootstrap-table.css" rel="stylesheet" type="text/css" />
+    <script src="Libs/bootstrap/bootstrap-table.js" type="text/javascript"></script>
+    <script src="Libs/bootstrap/bootstrap-table-zh-CN.js" type="text/javascript"></script>
+    <!--引入chroma颜色处理器-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.2/chroma.min.js" type="text/javascript"></script>
+    <!--地图初始化脚本-->
+    <script src="Scripts/Init.js" type="text/javascript"></script>
+    <!--地图操作脚本-->
+    <script src="Scripts/Display0.js" type="text/javascript"></script>
+    <script src="Scripts/Display1.js" type="text/javascript"></script>
+    <script src="Scripts/Display2.js" type="text/javascript"></script>
+    <!--投影转换脚本-->
+    <script src="https://cdn.bootcss.com/proj4js/2.6.0/proj4-src.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+</head>
+<body onload="init()">
+    <div id="header">
+        <a class="logo">
+            <img src="Libs/images/logo.png" style="display:none;" />
+            <span>月球可视化</span>
+        </a>
+    </div>
+    <div id="content">
+        <div id="leftsidebar">
+            <div class="leftsidebar_box">
+                <div><img id="leftfold" src="Libs/images/left/LeftFold.png" width="25" height="25" /></div>
+                <div class="line"></div>
+                <div id="leftcontent">
+
+                    <ul>
+                        <li style="border-bottom: groove 1px rgba(255,255,255,0.5);">
+                            <span id="display0_span" class="display_first">地图投影</span>
+                            <ul id="display0_ul" class="display_first_ul">
+                                <li style="color: #FFFFE0; font-size: 16px; font-weight: bold;" onclick="projection_cha(1)"><span>等距圆柱投影</span></li>
+                                <li onclick="projection_cha(2)"><span>极射赤平投影（北极）</span></li>
+                                <li onclick="projection_cha(3)"><span>极射赤平投影（南极）</span></li>
+                                <li onclick="projection_cha(4)"><span>正射投影（正面）</span></li>
+                                <li onclick="projection_cha(5)"><span>正射投影（背面）</span></li>
+                                <!--<li onclick="projection_cha(6)">三维展示</li>-->
+                            </ul>
+                        </li>
+
+                        <li style="border-bottom: groove 1px rgba(255,255,255,0.5); position: relative;">
+                            <span class="display_first">图层添加</span>
+                            <div style="display: none;">
+                                <button id="content_or_layer" onclick="content_or_layer()">按图层</button>
+
+                                <div id="display_first_content" style="position: relative;">
+                                    <button id="layers_clear" onclick="layers_clear()">一键清空</button>
+                                    <ul class="display_first_ul">
+                                        <li>
+                                            <span class="display_second">月海玄武岩</span>
+                                            <ul class="display_second_ul" style="display:none;">
+                                                <li><input name="display1_layers" type="checkbox" value="LROC_GLOBAL_MARE_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>全月月海</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="月海玄武岩" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>全月月海玄武岩单元划分</label></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="display_second">拍摄影像区域</span>
+                                            <ul class="display_second_ul" style="display:none;">
+                                                <li><input name="display1_layers" type="checkbox" value="NAC_PHO_SITES_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>光度序列图像位置</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="CONTROLLED_MOSAICS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>控制性镶嵌图像产品</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="FEATURED_MOSAICS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>特色镶嵌图像产品</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="NAC_DTMS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>数字高程模型覆盖区</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="STEREO_OBSERVATIONS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>立体观测区域</label></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="display_second">地形地貌</span>
+                                            <ul class="display_second_ul" style="display:none;">
+                                                <li><input name="display1_layers" type="checkbox" value="LOBATE_SCARPS_180" onchange="singleClick(event, 'line')" ondblclick="doubleClick(event, 'line')" /><label>叶状陡坎</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="POLAR_SCARP_LOCATIONS_180" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>极区叶状陡坎</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="LUNAR_IMP_LOCATIONS_180" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>不规则月海斑块</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="LUNAR_PIT_LOCATIONS_180" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>熔岩管洞穴</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="LUNAR_SWIRLS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>漩涡</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="WRINKLE_RIDGES_180" onchange="singleClick(event, 'line')" ondblclick="doubleClick(event, 'line')" /><label>皱脊</label></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="display_second">撞击坑</span>
+                                            <ul class="display_second_ul" style="display:none;">
+                                                <!--<li><input name="display1_layers" type="checkbox" value="LROC_5TO20KM_CRATERS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>全月表撞击坑（直径5-20km）</label></li>-->
+                                                <li><input name="display1_layers" type="checkbox" value="COPERNICAN_CRATERS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>哥白尼纪撞击坑</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="MOON_nomenclature_center_pts_180" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>已命名撞击坑</label></li>
+                                                <li style="color: #FFFFE0; font-size: 16px;"><b>全月撞击坑：</b></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Head_2010_LolaLargeLunarCraterCatalog_poly" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>>20km大撞击坑</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Povilaitis_2018_LROC_5TO20KM_CRATERS_180_PTS" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>5-20km撞击坑</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Robbins_2019_lon_180_lat_diam_a_b_ecc_ell_ang" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>>1km撞击坑（Robbins）</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="LU1319373_Wang_Wu_2021" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>>1km撞击坑（Wang）</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Salamuniccar_2014_LU78287GT_Moon2000" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>撞击坑（Salamunićcar）</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Ohman_2015_crater" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>撞击坑（Ohman）</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Yang_crater" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>撞击坑（Yang）</label></li>
+                                                <li style="color: #FFFFE0; font-size: 16px;"><b>二次撞击坑：</b></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Singer_2020_Copernicus" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>哥白尼二次坑</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Singer_2020_Kepler" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>开普勒二次坑</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Singer_2020_Orientale" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>东海二次坑（Singer）</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Guo_2018_full_secondaries" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>东海二次坑（Guo）</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Wu_2019_3k_up" onchange="singleClick(event, 'line')" ondblclick="doubleClick(event, 'line')" /><label>东海二次坑（Wu）</label></li>
+                                                <li style="color: #FFFFE0; font-size: 16px;"><b>局部撞击坑：</b></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Qian_CE5_Craters_4145N4969W" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>CE5着陆区撞击坑（qian）</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Yue_2022_CRATER_ce5_crater_combine" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>CE5着陆区撞击坑（Yue）</label></li>
+                                                <li style="color: #FFFFE0; font-size: 16px;"><b>Krüger识别撞击坑：</b></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Simple_mare_merge_Polyline" onchange="singleClick(event, 'line')" ondblclick="doubleClick(event, 'line')" /><label>简单撞击坑-月海</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Simple_highland_merge_Polyline" onchange="singleClick(event, 'line')" ondblclick="doubleClick(event, 'line')" /><label>简单撞击坑-高地</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Intermediate_mare_craterrim_merge_line" onchange="singleClick(event, 'line')" ondblclick="doubleClick(event, 'line')" /><label>过渡型撞击坑-月海</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Intermediate_highland_craterrim_merge_line" onchange="singleClick(event, 'line')" ondblclick="doubleClick(event, 'line')" /><label>过渡型撞击坑-高地</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Complex_mare_rim_erasefloor" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>复杂撞击坑坑壁-月海</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Complex_mare_floor_erasePeak" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>复杂撞击坑坑底-月海</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Complex_highland_rim_erasefloor" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>复杂撞击坑坑壁-高地</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="Complex_highland_floor_erasePeak" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>复杂撞击坑坑底-高地</label></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="display_second">Hiesinger等人汇编数据</span>
+                                            <ul class="display_second_ul" style="display:none;">
+                                                <li><input name="display1_layers" type="checkbox" value="HIESINGER2011_MARE_AGE_UNITS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>汇编月海单元</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="HIESINGER2011_MARE_CRATER_COUNT_AREAS_180" onchange="singleClick(event, 'area')" ondblclick="doubleClick(event, 'area')" /><label>撞击坑统计单元</label></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="display_second">其他</span>
+                                            <ul class="display_second_ul" style="display:none;">
+                                                <li><input name="display1_layers" type="checkbox" value="ANTHROPOGENIC_OBJECTS_180" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>人类活动地点</label></li>
+                                                <li><input name="display1_layers" type="checkbox" value="CX_TARGETS_180" onchange="singleClick(event, 'point')" ondblclick="doubleClick(event, 'point')" /><label>星座计划候选着陆点</label></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <span class="display_second">栅格类数据</span>
+                                            <ul class="display_second_ul" style="display:none;">
+                                                <li onclick="rightsidebar_tif(this)"><input name="display1_layers" type="checkbox" value="grid_age_craterstats3" onchange="singleClick(event, 'tif')" ondblclick="doubleClick(event, 'tif')" /><label>栅格年龄图</label></li>
+                                                <li onclick="rightsidebar_tif(this)"><input name="display1_layers" type="checkbox" value="grid_age_refined_craterstats3" onchange="singleClick(event, 'tif')" ondblclick="doubleClick(event, 'tif')" /><label>栅格年龄图（修）</label></li>
+                                                <li onclick="rightsidebar_tif(this)"><input name="display1_layers" type="checkbox" value="CR_moon" onchange="singleClick(event, 'tif')" ondblclick="doubleClick(event, 'tif')" /><label>成坑速率空间校正系数</label></li>
+                                                <li onclick="rightsidebar_tif(this)"><input name="display1_layers" type="checkbox" value="Iron_Hd_Cyl" onchange="singleClick(event, 'tif')" ondblclick="doubleClick(event, 'tif')" /><label>铁含量</label></li>
+                                                <li onclick="rightsidebar_tif(this)"><input name="display1_layers" type="checkbox" value="IIM_global_mosaic_20140326_new_geo_10X10_geo_cont_IBD_2b" onchange="singleClick(event, 'tif')" ondblclick="doubleClick(event, 'tif')" /><label>镁含量</label></li>
+                                                <li onclick="rightsidebar_tif(this)"><input name="display1_layers" type="checkbox" value="Thorium_Hd_Cyl" onchange="singleClick(event, 'tif')" ondblclick="doubleClick(event, 'tif')" /><label>钍含量</label></li>
+                                                <li onclick="rightsidebar_tif(this)"><input name="display1_layers" type="checkbox" value="WAC_TIO2_GCS_MB_NAN_HD" onchange="singleClick(event, 'tif')" ondblclick="doubleClick(event, 'tif')" /><label>二氧化钛含量</label></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div id="display_first_layer" style="display: none;">
+                                    <ul id="display_first_layer_ul" class="display_first_ul"></ul>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li style="border-bottom: groove 1px rgba(255,255,255,0.5);">
+                            <span class="display_first">绘制查询</span>
+                            <div style="display: none;">
+                                <ul id="display2_ul" class="display_first_ul">
+                                    <li>
+                                        <label for="draw_method">绘制方法：</label>
+                                        <select id="draw_method" onchange="draw_method_change()">
+                                            <option value="Point" selected="selected">点</option>
+                                            <option value="LineString">线</option>
+                                            <option value="Polygon">多边形</option>
+                                            <option value="Circle">圆</option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <label for="search_range">查询范围：</label>
+                                        <select id="search_range">
+                                            <option value="show" selected="selected">已显示要素</option>
+                                            <option value="all">所有要素</option>
+                                        </select>
+                                    </li>
+                                </ul>
+                                <div style="text-align: center;">
+                                    <button id="draw_start" onclick="draw_start()">开始绘制</button>
+                                    <button id="draw_clear" onclick="draw_clear()">清空</button>
+                                    <button id="search_start" onclick="search_start()">搜索</button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="iframe_wrapper">
+            <iframe id="container_iframe" name="container_iframe" scrolling="no"></iframe>
+        </div>-->
+
+        <div id="map">
+            <!-- Mouse Position -->
+            <div id="mouse-position" class="custom-mouse-position"></div>
+            <!-- Scale Line -->
+            <!--<div class="custom-scale-line"><div id="scale-line"></div></div>-->
+            <!-- Popup -->
+            <div id="popup" class="ol-popup">
+                <div id="popup-closer" class="ol-popup-closer"></div>
+                <div id="popup-content">
+                </div>
+            </div>
+        </div>
+
+        <div id="rightsidebar" style="display:none;">
+            <div>
+                <div id="rightsidebar_close" onclick="rightsidebar_close()">x</div>
+                <div id="rightsidebar_head"></div>
+                <div id="rightsidebar_content">
+                    <div id="rightsidebar_content_1" style="overflow-y: auto; width: 242px; height: 100%; margin-bottom: 10px; "></div>
+                    <div id="dragbar"></div>
+                    <div id="rightsidebar_content_2" style="overflow-y: auto; width: 242px; margin-top: 10px; "></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="color_change" style="display:none;">
+        <div id="color_change_close" onclick="color_change_close()">x</div>
+        <div id="color_change_head"><b>图层颜色样式设置</b></div>
+        <div id="color_change_content"></div>
+        <div id="color_change_type" style="display:none;"></div><!--记录OverLayers的类型-->
+        <div id="color_change_value" style="display:none;"></div><!--记录OverLayers_num里的序号-->
+        <div id="color_change_color" style="display:none;"></div><!--记录Checkbox应该显示的颜色-->
+        <button id="color_change_confirm" onclick="color_change_confirm()">确认</button>
+    </div>
+
+    <div id="loader" style="display:none;">
+        <div id="loader_an"></div><!--加载动画-->
+    </div>
+</body>
+</html>
