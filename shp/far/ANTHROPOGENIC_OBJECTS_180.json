@@ -1,0 +1,4 @@
+{"type":"FeatureCollection", "features": [
+{"type":"Feature","geometry":{"type":"Point","coordinates":[1697643.4820980693,356757.62564976997,1740202.6,-1.7976931348623157e+308]},"properties":{"SHORT_NAME":"LADEE","MISSION":"LADEE","OBJECT":"Spacecraft impact site","LATITUDE":11.8494,"LON_360":266.7506,"LONGITUDE":-93.2494,"RADIUS":1740202.6,"RAD_SRC":"NAC DTM","UNCERTAIN":6.1}},
+{"type":"Feature","geometry":{"type":"Point","coordinates":[-51276.59151331212,-1238265.7926911097,0,-1.7976931348623157e+308]},"properties":{"SHORT_NAME":"Chang'e 4","MISSION":"Chang'e 4","OBJECT":"Lander","LATITUDE":-45.456,"LON_360":177.5886,"LONGITUDE":177.5866,"RADIUS":1731471.82,"RAD_SRC":"NAC DTM","UNCERTAIN":28.6}}
+]}
